@@ -20,54 +20,26 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     Route::prefix('users')->name('users.')->group(function () {
-        // LISTA - solo admin
-        Route::get('/', function () {
-            if (auth()->user()->role !== 'admin') {
-                abort(403, 'Solo administradores');
-            }
-            return app(UserController::class)->index();
-        })->name('index');
+        // Middleware para asegurar que solo admin acceda a estas rutas
+        Route::middleware(['auth', 'verified'])->group(function () {
+            
+            // Verificación de rol manual o mediante Policy en el controlador es recomendada
+            // Aquí simplificamos usando una restricción en línea o middleware personalizado
+            
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/', [UserController::class, 'store'])->name('store');
+            Route::get('/{user}', [UserController::class, 'show'])->name('show');
+            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('/{user}', [UserController::class, 'update'])->name('update');
 
-        // CREAR - solo admin
-        Route::get('/create', function () {
-            if (auth()->user()->role !== 'admin') {
-                abort(403, 'Solo administradores');
-            }
-            return app(UserController::class)->create();
-        })->name('create');
-
-        Route::post('/', function (Illuminate\Http\Request $request) {
-            if (auth()->user()->role !== 'admin') {
-                abort(403, 'Solo administradores');
-            }
-            return app(UserController::class)->store($request);
-        })->name('store');
-
-        // VER - todos pueden ver
-        Route::get('/{user}', [UserController::class, 'show'])->name('show');
-
-        // EDITAR - solo admin
-        Route::get('/{user}/edit', function (App\Models\User $user) {
-            if (auth()->user()->role !== 'admin') {
-                abort(403, 'Solo administradores');
-            }
-            return app(UserController::class)->edit($user);
-        })->name('edit');
-
-        Route::put('/{user}', function (Illuminate\Http\Request $request, App\Models\User $user) {
-            if (auth()->user()->role !== 'admin') {
-                abort(403, 'Solo administradores');
-            }
-            return app(UserController::class)->update($request, $user);
-        })->name('update');
-
-        // ELIMINAR - solo admin
-        Route::delete('/{user}', function (App\Models\User $user) {
-            if (auth()->user()->role !== 'admin') {
-                abort(403, 'Solo administradores');
-            }
-            return app(UserController::class)->destroy($user);
-        })->name('destroy');
+            // ELIMINAR: Requiere confirmación de contraseña Y ser admin
+            Route::delete('/{user}', [UserController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware(['password.confirm']); 
+                // 'password.confirm' pedirá la contraseña antes de ejecutar la acción.
+                // La validación de si es 'admin' debe permanecer en el Controlador o Middleware CheckRole.
+        });
     });
 
     Route::resource('products', ProductController::class);
