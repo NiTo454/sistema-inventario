@@ -27,6 +27,7 @@
                         <th>STOCK</th>
                         <th>CATEGORIA</th>
                         <th>MARCA</th>
+                        <th>ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,9 +40,6 @@
                         <td>{{ $product->stock }}</td>
                         <td>{{ $product->category }}</td>
                         <td>{{ $product->brand }}</td>
-                        <td>
-
-                        </td>
 
                         <td>
                             <a href="{{ route('products.show', $product) }}" class="btn btn-sm btn-info">
@@ -54,7 +52,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('¿Está seguro de eliminar este usuario?')">
+                                        onclick="return confirm('¿Está seguro de eliminar este producto?')">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>

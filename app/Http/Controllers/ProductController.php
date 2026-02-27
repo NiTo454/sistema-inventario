@@ -14,12 +14,12 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return view('products.index', compact('products'));
+        return view('auth.products.index', compact('products'));
     }
 
     public function create()
     {
-        return view('products.create');
+        return view('auth.products.create');
     }
 
     public function store(Request $request)
@@ -42,12 +42,12 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return view('products.show', compact('product'));
+        return view('auth.products.show', compact('product'));
     }
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        return view('auth.products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
