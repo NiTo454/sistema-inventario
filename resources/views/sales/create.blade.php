@@ -3,109 +3,110 @@
 @section('title', 'Registrar Venta')
 
 @section('content')
-<div class="container py-4">
+<div class="container py-5">
+    {{-- Encabezado --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-dark mb-1">Nueva Venta</h1>
+            <p class="text-muted mb-0">Complete los detalles para registrar una transacción.</p>
+        </div>
+        <a href="{{ route('sales.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
-                    <h5 class="mb-0 text-primary fw-bold">
-                        <i class="bi bi-cart-plus-fill me-2"></i>Nueva Transacción de Venta
-                    </h5>
-                    <a href="{{ route('sales.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill">
-                        <i class="bi bi-arrow-left me-1"></i> Volver al listado
-                    </a>
-                </div>
-
-                <div class="card-body p-4">
-                    @if($errors->any())
-                        <div class="alert alert-danger border-0 shadow-sm mb-4">
-                            <div class="d-flex">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                <div>
-                                    <strong>¡Atención!</strong> Por favor revisa los siguientes campos:
-                                    <ul class="mb-0 mt-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
+        <div class="col-lg-12">
+            @if($errors->any())
+                <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                        <div>
+                            <strong>¡Atención!</strong> Revisa los siguientes errores:
+                            <ul class="mb-0 mt-1 small">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                    @endif
+                    </div>
+                </div>
+            @endif
 
-                    <form action="{{ route('sales.store') }}" method="POST" id="sale-form">
-                        @csrf
-                        <div class="row g-4">
-                            {{-- Columna Izquierda: Selección --}}
-                            <div class="col-md-7">
-                                <div class="p-3 bg-light rounded-3 h-100">
-                                    <h6 class="fw-bold mb-3">Detalles del Producto</h6>
-                                    
-                                    {{-- Selección de Producto --}}
-                                    <div class="mb-4">
-                                        <label for="product_id" class="form-label text-muted small fw-bold">SELECCIONAR PRODUCTO</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-box-seam"></i></span>
-                                            <select name="products[0][id]" id="product_id" 
-                                                    class="form-select border-start-0 shadow-none @error('products.0.id') is-invalid @enderror" required>
-                                                <option value="" data-price="0">Buscar producto...</option>
-                                                @foreach($products as $product)
-                                                    <option value="{{ $product->id }}" data-price="{{ $product->price }}" data-stock="{{ $product->stock }}">
-                                                        {{ $product->name }} (Stock: {{ $product->stock }})
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+            <form action="{{ route('sales.store') }}" method="POST" id="sale-form">
+                @csrf
+                <div class="row g-4">
+                    {{-- Panel de Selección --}}
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
+                                <h5 class="fw-bold text-primary mb-0"><i class="bi bi-cart3 me-2"></i>Detalles del Producto</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="mb-4">
+                                    <label for="product_id" class="form-label fw-bold text-secondary small">PRODUCTO</label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                                        <select name="products[0][id]" id="product_id" 
+                                                class="form-select bg-light border-0 shadow-none @error('products.0.id') is-invalid @enderror" required>
+                                            <option value="" data-price="0">Seleccionar producto...</option>
+                                            @foreach($products as $product)
+                                                <option value="{{ $product->id }}" data-price="{{ $product->price }}" data-stock="{{ $product->stock }}">
+                                                    {{ $product->name }} (Stock: {{ $product->stock }})
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
+                                </div>
 
-                                    {{-- Cantidad --}}
-                                    <div class="mb-0">
-                                        <label for="quantity" class="form-label text-muted small fw-bold">CANTIDAD A VENDER</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-plus-minus"></i></span>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label for="quantity" class="form-label fw-bold text-secondary small">CANTIDAD</label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text bg-light border-0"><i class="bi bi-123 text-muted"></i></span>
                                             <input type="number" name="products[0][quantity]" id="quantity" 
-                                                   class="form-control border-start-0 shadow-none @error('products.0.quantity') is-invalid @enderror" 
+                                                   class="form-control bg-light border-0 shadow-none fw-bold @error('products.0.quantity') is-invalid @enderror" 
                                                    min="1" placeholder="0" required>
                                         </div>
-                                        <div id="stock-warning" class="text-danger small mt-1 d-none">
-                                            <i class="bi bi-exclamation-circle"></i> La cantidad supera el stock disponible.
+                                        <div id="stock-warning" class="text-danger small mt-2 d-none fw-bold">
+                                            <i class="bi bi-exclamation-circle-fill"></i> Stock insuficiente.
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            {{-- Columna Derecha: Resumen --}}
-                            <div class="col-md-5">
-                                <div class="card border-primary h-100">
-                                    <div class="card-body d-flex flex-column">
-                                        <h6 class="fw-bold mb-4">Resumen de Venta</h6>
-                                        
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span class="text-muted">Precio Unitario:</span>
-                                            <span id="unit-price" class="fw-bold">$0.00</span>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary small">PRECIO UNITARIO</label>
+                                        <div class="p-3 bg-light rounded-3 text-end">
+                                            <span id="unit-price" class="fw-bold fs-5 text-dark">$0.00</span>
                                         </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <span class="text-muted">Cantidad:</span>
-                                            <span id="display-quantity" class="fw-bold">0</span>
-                                        </div>
-                                        
-                                        <hr class="mt-auto">
-                                        
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <span class="h5 mb-0 text-muted">Total a Pagar:</span>
-                                            <span id="total-price" class="h3 mb-0 text-success fw-bold">$0.00</span>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-success btn-lg py-3 rounded-3 shadow-sm w-100">
-                                            <i class="bi bi-check2-circle me-2"></i>Confirmar Venta
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+
+                    {{-- Panel de Resumen --}}
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h5 class="fw-bold mb-4 border-bottom border-white border-opacity-25 pb-3">Resumen de Venta</h5>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-white-50">Cantidad Items</span>
+                                    <span id="display-quantity" class="fs-5 fw-bold">0</span>
+                                </div>
+                                
+                                <div class="mt-auto pt-4">
+                                    <div class="text-white-50 small text-uppercase fw-bold mb-1">Total a Pagar</div>
+                                    <div class="display-5 fw-bold mb-4" id="total-price">$0.00</div>
+                                    
+                                    <button type="submit" class="btn btn-light text-primary w-100 py-3 fw-bold rounded-3 shadow-sm">
+                                        <i class="bi bi-check-lg me-2"></i>Confirmar Venta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
